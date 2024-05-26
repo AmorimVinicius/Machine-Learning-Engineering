@@ -24,7 +24,7 @@ def get_exportacao_ano(tipo: str, ano: str):
 
 def get_exportacao(ano = None):
     tipos_exportacao = ['Vinho', 'Espumantes', 'Uva', 'Suco']
-    header = ['id', 'pais'] + [f"{ano}_{coluna}" for ano in range(1970, 2023) for coluna in ['quantidade', 'valor']]
+    header = ['id', 'pais'] + [f"{ano}_{coluna}" for ano in range(1970, 2024) for coluna in ['quantidade', 'valor']]
     csv_data = []
 
     for exportacao in tipos_exportacao:
@@ -41,7 +41,7 @@ def get_exportacao(ano = None):
                 initial_dict = {'id': row['id']}
                 temp_dict = {
                     f"{ano}": {"quantidade": row.get(f'{ano}_quantidade', '0'), "valor": row.get(f"{ano}_valor", '0')}
-                    for ano in range(1970, 2023)}
+                    for ano in range(1970, 2024)}
                 initial_dict.update(temp_dict)
                 csv_data[tipos_exportacao.index(exportacao)].update({row['pais']: initial_dict})
 
