@@ -532,6 +532,58 @@ curl -X GET ""http://localhost:8000/importacao/3"
 }
 ```
 
+### GET /importacao_ano/[ano]
+
+**Descrição**: Este endpoint retorna dados detalhados sobre a quantidade em g e valor dólares (US$) de importação de derivados de uva e os respectivos paises, com dados filtrados a partir do ano selecionado.
+
+O parâmetro [ano] deve ser um ano válido entre 1970 e 2023.
+
+
+**Referência**:
+
+
+| Categoria | ID        |
+|-----------|-----------|
+|Vinhos     | 1         |
+|Espumantes | 2         |
+|Frescas    | 3         |
+|Passas     | 4         |
+|Suco       | 5         |
+
+
+**Parâmetros**:
+
+|   Parâmetro   |   Tipo   |   Descricao   |
+|---------------|----------|---------------|
+| Ano          | String   | Ano de processamento |
+
+**Exemplo de Requisição:**
+
+```sh
+curl -X GET ""http://localhost:8000/importacao_ano/1980"
+```
+
+**Resposta:**
+
+```json
+{
+  "id": 1,
+  "tipo_importacao": "Vinhos",
+    "Africa do Sul": {
+      "1980": {
+        "quantidade": "0",
+        "valor": "0"
+      }
+    },
+    "Alemanha": {
+      "1980": {
+        "quantidade": "457033",
+        "valor": "704307"
+      }
+    },
+    ...
+}
+```
 
 ### GET /exportacao
 
@@ -654,6 +706,64 @@ curl -X GET ""http://localhost:8000/exportacao/2/1970"
     }
     ...
   },
+}
+```
+
+### GET /exportacao_ano/[ano]
+
+**Descrição**: Este endpoint retorna dados detalhados sobre a quantidade em Kg e valor dólares (US$) de exportação de derivados de uva e os respectivos paises, com dados filtrados a partir do ano selecionado.
+
+O parâmetro [ano] deve ser um ano válido entre 1970 e 2023.
+
+**Referência**:
+
+| Categoria | ID de Consulta |
+|-----------|----------------|
+|Vinhos     | 1              |
+|Espumantes | 2              |
+|Uvas       | 3              |
+|Suco       | 4              |
+
+
+**Parâmetros**:
+
+| Parâmetro |   Tipo   | Descricao            |
+|-----------|----------|----------------------|
+| Ano       | String   | Ano do processamento |
+
+**Exemplo de Requisição:**
+
+```sh
+curl -X GET ""http://localhost:8000/exportacao_ano/1970"
+```
+
+**Resposta:**
+
+```json
+{
+    {
+      "id": 1,
+      "tipo_exportacao": "Vinho",
+      "Afeganistão": {
+        "1970": {
+          "quantidade": "0",
+          "valor": "0"
+        }
+      },
+      "África do Sul": {
+        "1970": {
+          "quantidade": "0",
+          "valor": "0"
+        }
+      },
+      "Alemanha, República Democrática": {
+        "1970": {
+          "quantidade": "0",
+          "valor": "0"
+        }
+    },
+    ...
+  }
 }
 ```
 
