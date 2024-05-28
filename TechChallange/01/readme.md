@@ -773,7 +773,10 @@ curl -X GET ""http://localhost:8000/exportacao_ano/1970"
 
 ## Erros
 
-Tratamentos utilizados para possíveis erros retornados pela API e seus significados.
+Tratamentos utilizados para possíveis erros retornados pela API e seus significados: https://learn.microsoft.com/pt-br/partner-center/developer/error-codes
+
+Qualquer código retornado que seja diferente de 200 é possível localizar seu descritivo através do link acima.
+Ao retornar o código 200 (sucesso para requisição) a consulta é realizada com sucesso.
 
 ## Contribuição
 
