@@ -780,6 +780,6 @@ Tratamentos utilizados para possíveis erros retornados pela API e seus signific
 Este trabalho foi elaborado em equipe e os alunos responsáveis por ele são:
 
 - Ângelo Cabral - linkedin: https://www.linkedin.com/in/angelocassio/
-- Felipe Chagas - linkedin:  
+- Felipe Chagas - linkedin:  https://www.linkedin.com/in/felipe-chagas-08958227/
 - Gabriela Nogueira - linkedin: https://www.linkedin.com/in/gabriela-nogueira/
 - Vinicius Amorim - linkedin: https://www.linkedin.com/in/viniciusdeamorim/
