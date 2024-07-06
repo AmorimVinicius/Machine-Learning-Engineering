@@ -3,7 +3,7 @@ Conteúdo desenvolvido durante os estudos da Pós Tech - Machine Learning Engine
 
 ### Pipeline Batch Bovespa:
 
-- Requisito 1: Scrap de dados do site da B3 com dados do pregão D-1;
+- Requisito 1: Scrap de dados do site da B3 com dados do pregão D-1 🆗
 - Requisito 2: Os dados brutos devem ser ingeridos no s3 em formato parquet com partição diária;
 - Requisito 3: O bucket deve acionar uma lambda que por sua vez irá chamar o job de ETL no glue;
 - Requisito 4: A lambda pode ser em qualquer linguagem. Ela apenas deverá iniciar o job Glue;
