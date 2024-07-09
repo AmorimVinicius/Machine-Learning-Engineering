@@ -1,9 +1,8 @@
 {
     "version": "0.2.0",
     "configurations": [
-        
         {
-            "name": "Python: Django",
+            "name": "Django",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/manage.py",
@@ -11,8 +10,7 @@
                 "runserver",
                 "--noreload"
             ],
-            "django": true,
-            "cwd": "${workspaceFolder}"
+            "django": true
         }
     ]
 }
