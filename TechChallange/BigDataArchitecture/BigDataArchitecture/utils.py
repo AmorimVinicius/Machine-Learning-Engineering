@@ -51,8 +51,8 @@ def download():
             file_txt = zip_file.read(file_list[0]).decode('utf-8')
 
             # Remover cabecalho (separa arquivo em linhas)
-            remove_header = file_txt.strip().splitlines()
-            file_txt = "\n".join(remove_header[1:])
+            # remove_header = file_txt.strip().splitlines()
+            # file_txt = "\n".join(remove_header[1:])
             return file_txt           
         else:
             raise ValueError('Falha ao extrair arquivo')
@@ -63,7 +63,10 @@ def process(file_request):
     try:
 
         # Converter para pandas
-        df = pd.read_csv(io.StringIO(file_request), delimiter = ';', nrows = 100)
+        df = pd.read_csv(io.StringIO(file_request), delimiter = ';')
+
+        # Adicionar nova coluna de data
+        df['DataAjustada'] = data_format
 
         # Converter para parquet
         file_parquet = pa.Table.from_pandas(df)
