@@ -52,7 +52,7 @@ def fetch_stock_data(ticker):
         stock = yf.Ticker(ticker + ".SA")
         info = stock.info
 
-        loop = 5
+        loop = 730
         j = 0
 
         for i in range(loop):
