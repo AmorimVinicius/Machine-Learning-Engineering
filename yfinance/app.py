@@ -4,10 +4,8 @@ import os
 
 app = Flask(__name__)
 
-# Rota para buscar os dados historicos
-
+# Rota para buscar os dados históricos
 @app.route('/api/get_stock_price', methods=['GET'])
-
 def get_stock_price():
     ticker = request.args.get('ticker')
     if not ticker:
@@ -21,7 +19,6 @@ def get_stock_price():
         return jsonify(data)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
