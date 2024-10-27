@@ -1,25 +1,33 @@
-from flask import Flask, request, jsonify
-import yfinance as yf
-import os
+from flask import Flask, jsonify
+import tensorflow as tf
 
 app = Flask(__name__)
 
-# Rota para buscar os dados históricos
-@app.route('/api/get_stock_price', methods=['GET'])
-def get_stock_price():
-    ticker = request.args.get('ticker')
-    if not ticker:
-        return jsonify({'error': 'Ação não encontrada'}), 400
-    try:
-        stock_data = yf.Ticker(ticker)
-        historical = stock_data.history(period="5d")
+# Carrega o modelo
+model = tf.keras.models.load_model('modelo/lstm.h5')
 
-        # Serializar json
-        data = historical.reset_index().to_dict(orient='records')
-        return jsonify(data)
+# Função para fazer previsões
+def make_prediction():
+    # Chama o método de previsão do seu modelo
+    predictions = model.predict_future()  # Altere isso para o método correto do seu modelo
+    return {
+        "predictions_5_days": predictions[0],
+        "predictions_10_days": predictions[1],
+        "predictions_15_days": predictions[2],
+        "predictions_20_days": predictions[3],
+    }
+
+@app.route('/predict', methods=['GET'])
+def predict():
+    try:
+        # Chama a função de previsão
+        predictions = make_prediction()
+        
+        # Retorna a previsão em formato JSON
+        return jsonify(predictions)
+
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
-
+    app.run(debug=True)
