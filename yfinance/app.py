@@ -1,17 +1,36 @@
+from datetime import timedelta
 from flask import Flask, jsonify, make_response, request
-import yfinance as yf
-import numpy as np
-import tensorflow as tf
+from prometheus_client import Counter, Histogram, start_http_server, Gauge
 from sklearn.preprocessing import MinMaxScaler
-import os
-from datetime import timedelta, date
 import holidays
+import numpy as np
+import os
+import psutil
+import tensorflow as tf
+import time
+import yfinance as yf
+
+
+# Criando metricas
+REQUEST_COUNT       = Counter('api_request_total',              'Total de requisições recebidas')
+REQUEST_DURATION    = Histogram('api_request_duration_seconds', 'Duração das requisições em segundos')
+ERROR_COUNT         = Counter('api_error_total',                'Total de erros da API')
+CPU_USAGE           = Gauge('system_cpu_usage_percent',         'Percentual de uso da CPU do sistema')
+MEMORY_USAGE        = Gauge('system_memory_usage_percent',      'Percentual de uso da memória do sistema')
 
 app = Flask(__name__)
 
+# Inicia o prometheus
+start_http_server(8000)
+
 # Carregar o modelo
-model_path = os.path.join('C:/GIT/Machine-Learning-Engineering/yfinance/modelo', 'lstm.h5')
+model_path = os.path.join('modelo', 'lstm.h5')
 model = tf.keras.models.load_model(model_path)
+
+# Funcao para coletar metricas do sistema
+def collect_system_metrics():
+    CPU_USAGE.set(psutil.cpu_percent())
+    MEMORY_USAGE.set(psutil.virtual_memory().percent)
 
 # Funcao para gerar as proximos datas uteis
 def generate_future_dates(last_date, days):
@@ -67,8 +86,9 @@ def make_prediction(ticker, days=20):
     future_dates = generate_future_dates(last_date, days)
 
     # Retornar JSON
-    return {
-        f"Previsões para os próximos 20 dias da empresa {ticker}": [
+    show_ticker = ticker.replace('.SA', '')
+    return {       
+        f"Previsões para os próximos 20 dias da empresa {show_ticker}": [
             {
                 "Data": date, 
                 "Previsão R$": round(prediction, 2)
@@ -78,7 +98,9 @@ def make_prediction(ticker, days=20):
     }
 
 @app.route('/predict', methods=['GET'])
+@REQUEST_DURATION.time()
 def predict():
+    REQUEST_COUNT.inc() # Conta requisicoes
     try:
 
         # Obter ticker do parametro
@@ -97,4 +119,13 @@ def predict():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
+    import threading
+
+    def collect_metrics():
+        while True:
+            collect_system_metrics()
+            time.sleep(10)
+
+    # Iniciar thread para coletar metricas
+    threading.Thread(target = collect_metrics, daemon = True).start()
     app.run(debug=True)
