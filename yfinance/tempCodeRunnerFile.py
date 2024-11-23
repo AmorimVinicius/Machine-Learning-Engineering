@@ -1,1 +1,0 @@
-# Seleciona as últimas observações para a série inicial

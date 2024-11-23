@@ -1,15 +1,16 @@
 # Imagem python
-FROM python:3.9-slim
+FROM python:3.11-slim
 
 # Diretorio de trabalho
 WORKDIR /app
 
 # Copiar arquivos
 COPY requirements.txt requirements.txt
-COPY app.py app.py
+COPY . /app/
 
 # Instalar dependencias
-RUN pip install -r requirements.txt
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Export a porta da API
 EXPOSE 5000
