@@ -1,6 +1,8 @@
 from datetime import timedelta
-from flask import Flask, jsonify, make_response, request
-from prometheus_client import Counter, Histogram, start_http_server, Gauge
+from flask import Flask, jsonify, make_response, request, Response
+from flask_cors import CORS
+from flask_swagger_ui import get_swaggerui_blueprint
+from prometheus_client import Counter, Histogram, start_http_server, Gauge, generate_latest, CONTENT_TYPE_LATEST
 from sklearn.preprocessing import MinMaxScaler
 import holidays
 import numpy as np
@@ -21,11 +23,25 @@ MEMORY_USAGE        = Gauge('system_memory_usage_percent',      'Percentual de u
 app = Flask(__name__)
 
 # Inicia o prometheus
-start_http_server(8000)
+start_http_server(9090)
+
+# Habilitar CORS
+#CORS(app)
+CORS(app, resources={r"/*": {"origins": "*", "methods": ["GET", "POST", "OPTIONS"], "allow_headers": "*"}})
 
 # Carregar o modelo
 model_path = os.path.join('modelo', 'lstm.h5')
 model = tf.keras.models.load_model(model_path)
+
+# Configurar swagger
+SWAGGER_URL = "/swagger"
+API_URL = "/static/swagger.json"
+swagger_bleprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config = {"app_name": "API de Previsão de Ativos"}
+)
+app.register_blueprint(swagger_bleprint, url_prefix=SWAGGER_URL)
 
 # Funcao para coletar metricas do sistema
 def collect_system_metrics():
@@ -97,9 +113,55 @@ def make_prediction(ticker, days=20):
         ]
     }
 
+@app.route('/metrics', methods=['GET'])
+def metrics():
+    """
+    Rota para expor as métricas do Prometheus.
+    """
+    # Incrementa o contador de requisições
+    REQUEST_COUNT.inc()
+
+    try:
+        # Gera as métricas e retorna no formato esperado pelo Prometheus
+        metrics_data = generate_latest()
+        return Response(metrics_data, content_type=CONTENT_TYPE_LATEST)
+
+    except Exception as e:
+        ERROR_COUNT.inc()  # Incrementa o contador de erros
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/predict', methods=['GET'])
 @REQUEST_DURATION.time()
 def predict():
+    """
+    Previsão de preços de ações.
+    ---
+    parameters:
+      - name: ticker
+        in: query
+        type: string
+        required: true
+        description: O código do ativo para previsão.
+    responses:
+      200:
+        description: Previsões retornadas com sucesso.
+        schema:
+          type: object
+          properties:
+            Previsões:
+              type: array
+              items:
+                type: object
+                properties:
+                  Data:
+                    type: string
+                    example: "25/11/2024"
+                  Previsão R$:
+                    type: number
+                    example: 23.45
+      500:
+        description: Erro no servidor.
+    """
     REQUEST_COUNT.inc() # Conta requisicoes
     try:
 
@@ -128,4 +190,5 @@ if __name__ == '__main__':
 
     # Iniciar thread para coletar metricas
     threading.Thread(target = collect_metrics, daemon = True).start()
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 8080))  # Porta padrão é 8080
+    app.run(host='0.0.0.0', port=port)
