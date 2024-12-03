@@ -1,5 +1,5 @@
 from datetime import timedelta
-from flask import Flask, jsonify, make_response, request, Response
+from flask import Flask, jsonify, make_response, request, Response, send_from_directory
 from flask_cors import CORS
 from flask_swagger_ui import get_swaggerui_blueprint
 from prometheus_client import Counter, Histogram, start_http_server, Gauge, generate_latest, CONTENT_TYPE_LATEST
@@ -20,13 +20,12 @@ ERROR_COUNT         = Counter('api_error_total',                'Total de erros 
 CPU_USAGE           = Gauge('system_cpu_usage_percent',         'Percentual de uso da CPU do sistema')
 MEMORY_USAGE        = Gauge('system_memory_usage_percent',      'Percentual de uso da memória do sistema')
 
-app = Flask(__name__)
+app = Flask(__name__,static_folder='static')
 
 # Inicia o prometheus
 start_http_server(9090)
 
 # Habilitar CORS
-#CORS(app)
 CORS(app, resources={r"/*": {"origins": "*", "methods": ["GET", "POST", "OPTIONS"], "allow_headers": "*"}})
 
 # Carregar o modelo
@@ -104,10 +103,10 @@ def make_prediction(ticker, days=20):
     # Retornar JSON
     show_ticker = ticker.replace('.SA', '')
     return {       
-        f"Previsões para os próximos 20 dias da empresa {show_ticker}": [
+        f"Previsao20Dias_{show_ticker}": [
             {
                 "Data": date, 
-                "Previsão R$": round(prediction, 2)
+                "Previsao": round(prediction, 2)
             } 
             for date, prediction in zip(future_dates, predictions)
         ]
@@ -179,7 +178,11 @@ def predict():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
+        
+@app.route("/swagger.json")
+def swagger_json():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'swagger.json')
+    
 if __name__ == '__main__':
     import threading
 

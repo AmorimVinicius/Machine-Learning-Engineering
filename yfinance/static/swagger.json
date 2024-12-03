@@ -1,57 +1,56 @@
 {
-    "swagger": "2.0",
-    "info": {
-      "version": "1.0.0",
-      "title": "API de Previsão de Ativos",
-      "description": "Documentação da API para previsão de preços de ativos financeiros"
-    },
-    "host": "localhost:8080",
-    "basePath": "/",
-    "schemes": ["https"],
-    "paths": {
-      "/predict": {
-        "get": {
-          "summary": "Prever preços de ativos",
-          "parameters": [
-            {
-              "name": "ticker",
-              "in": "query",
-              "required": true,
-              "type": "string",
-              "description": "O código do ativo para previsão"
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Previsões retornadas com sucesso",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "Previsões": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "Data": {
-                          "type": "string",
-                          "example": "dd/mm/aaaa"
-                        },
-                        "Previsão R$": {
-                          "type": "number",
-                          "example": 0.00
-                        }
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "API de Previsão de Ativos",
+    "description": "Documentação da API para previsão de preços de ativos financeiros"
+  },
+  "host": "flask-api-63818231984.southamerica-east1.run.app:8080",
+  "basePath": "/",
+  "schemes": ["http", "https"],
+  "paths": {
+    "/predict": {
+      "get": {
+        "summary": "Prever preços de ativos",
+        "parameters": [
+          {
+            "name": "ticker",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "description": "O código do ativo para previsão"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Previsões retornadas com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Previsões": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "Data": {
+                        "type": "string",
+                        "example": "dd/mm/aaaa"
+                      },
+                      "Previsão R$": {
+                        "type": "number",
+                        "example": 0.00
                       }
                     }
                   }
                 }
               }
-            },
-            "500": {
-              "description": "Erro no servidor"
             }
+          },
+          "500": {
+            "description": "Erro no servidor"
           }
         }
       }
     }
   }
-  
+}

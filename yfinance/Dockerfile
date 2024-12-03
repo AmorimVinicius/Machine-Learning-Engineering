@@ -8,6 +8,7 @@ WORKDIR /app
 COPY requirements.txt requirements.txt
 COPY app.py /app/
 COPY modelo/lstm.h5 modelo/
+COPY static /app/static
 
 # Instalar dependencias
 RUN pip install --upgrade pip && \
